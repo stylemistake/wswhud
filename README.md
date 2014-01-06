@@ -1,4 +1,0 @@
-wswhud
-======
-
-External Warsow HUD

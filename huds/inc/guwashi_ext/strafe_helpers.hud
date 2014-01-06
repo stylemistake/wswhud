@@ -1,0 +1,38 @@
+// Strafe helpers
+
+if %STRAFEANGLE > 0
+	setScale #SCALEBYWIDTH
+	setCursor 400, 274
+
+	setSize 0.003 * 4500 - %STRAFEANGLE, 3
+	setColor 0.6, 0.3, 1, 0.6
+
+	moveCursor 0.03 * %DIFF_ANGLE + %STRAFEANGLE , 0
+	setAlign #LEFT, #BOTTOM
+	drawPicByName gfx/hud/racesow/strafearrow_right
+
+	moveCursor -0.06 * %STRAFEANGLE , 0
+	setAlign #RIGHT, #BOTTOM
+	drawPicByName gfx/hud/racesow/strafearrow_left
+endif
+
+// setAlign #CENTER, #TOP
+// setSize 25, 2
+// setCursor 400, 405 - %MOUSE_Y / 20
+// setColor 1, 1, 0, 0.3
+// drawBar 1, 1
+
+// setAlign #CENTER, #TOP
+// setSize 25, 2
+// setCursor 400, 480 - %MOUSE_Y / 20
+// setColor 1, 0, 0, 0.5
+// drawBar 1, 1
+
+// setAlign #CENTER, #TOP
+// setSize 25, 2
+// setCursor 400, 520 - %MOUSE_Y / 20
+// setColor 0, 1, 0, 0.5
+// drawBar 1, 1
+
+setCursor 400, 300
+setScale #DEFAULTSCALE

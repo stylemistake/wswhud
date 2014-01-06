@@ -1,0 +1,42 @@
+// Guwashi HUD
+// Modified for wswhud_app
+
+setFont con_fontSystemsmall
+setScale #DEFAULTSCALE
+
+include wswhud/proto_pixcode
+
+if %MATCH_STATE < 4
+	include default/damage_indicator_screen
+	include default/crosshair
+	//include guwashi_ext/strafe_helpers
+	if %RACE == 0
+		include guwashi_ext/health_armor
+		include guwashi_ext/weaponlist
+		include guwashi_ext/scores
+		include guwashi_ext/clock
+		include default/ammo_warning
+		include default/stunned
+		include default/obituaries
+		include default/powerups
+		include default/team_info
+		include default/team_image
+		include default/team_message
+		include default/team_progress
+		include default/minimap
+		include default/item_timers
+	endif
+	include default/strafe
+	include guwashi_ext/speed
+	include default/fps
+	include default/chasing
+	include default/awards
+	include default/download
+	include default/net
+	include default/pointing
+	include default/keystate
+	/* Race */
+	setCursor 250, 470
+	include default/race_records
+endif //if %MATCH_STATE < 4
+include default/chat

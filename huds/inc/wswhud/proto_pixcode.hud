@@ -1,0 +1,88 @@
+// External timer triggers
+// This is a color code of item timing
+// External application recognises them and predicts the correct timing
+
+setAlign #LEFT, #TOP
+
+// ----- Draw a container -----
+setColor 0, 0, 0, 1
+setSize 25, 5
+setCursor 750, 0
+drawBar 1, 1
+
+// ----- Draw a pixcode beacon -----
+setSize 7, 5
+setColor 0.03125, 0.06250, 0.09375, 1 // ( 8, 16, 24 )
+setCursor 755, 0
+drawBar 1, 1
+setColor 0.06250, 0.03125, 0.09375, 1 // ( 16, 8, 24 )
+setCursor 760, 0
+drawBar 1, 1
+setColor 0.03125, 0.09375, 0.03125, 1 // ( 8, 24, 8 )
+setCursor 765, 0
+drawBar 1, 1
+setColor 0.09375, 0.00000, 0.03125, 1 // ( 24, 0, 8 )
+setCursor 770, 0
+drawBar 1, 1
+
+
+// ----- Draw pickups -----
+setSize 5, 5
+setCursor 750, 0
+
+if %HEALTH > 100
+	setColor 0.5, 0, 0.5, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_RED_ARMOR
+	setColor 1, 0, 0, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_YELLOW_ARMOR
+	setColor 1, 1, 0, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_GREEN_ARMOR
+	setColor 0, 1, 0, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_MEGA_HEALTH
+	setColor 1, 0, 1, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_ULTRA_HEALTH
+	setColor 0, 0, 1, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_QUAD_DAMAGE
+	setColor 1, 0.25, 0, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_WARSHELL
+	setColor 0.5, 0, 1, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_50_HEALTH
+	setColor 1, 0.5, 0, 1
+	drawBar 1, 1
+endif
+
+if %PICKUP_ITEM == #ITEM_25_HEALTH
+	setColor 1, 0.75, 0, 1
+	drawBar 1, 1
+endif
+
+// ----- Draw match state -----
+
+if %MATCH_STATE == 2
+	setColor 0.5, 1, 1, 1
+	drawBar 1, 1
+endif

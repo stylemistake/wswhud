@@ -1,0 +1,39 @@
+// speed (with shadow)
+if %SHOW_SPEED == 1
+
+	setAlign #LEFT, #MIDDLE
+	setCursor -118 + 0.5 * #WIDTH, -90 + #HEIGHT
+
+	// // draws the black border
+	// setColor 0, 0, 0, 0.1
+	// setSize 6 + 118 * 2, 24
+	// drawPicByName $whiteimage
+
+	// // draws the grey backdrop
+	// moveCursor 3, 0
+	// setColor 0.2, 0.2, 0.2, 0.1
+	// setSize 118 * 2, 18
+	// drawPicByName $whiteimage
+
+	// draws the bar
+	setColor 1, 1, 1, 0.1
+	setSize 118 * 2, 18
+	drawBar %SPEED * 0.1, 100
+	if %SPEED > 1000
+		setColor 1, 1, 0, 0.1
+		drawBar -100 + %SPEED * 0.1, 100
+	endif
+	if %SPEED > 2000
+		setColor 1, 0, 0, 0.1
+		drawBar -200 + %SPEED * 0.1, 100
+	endif
+
+	if %SPEED > 0
+		setColor 1 1 1 0.6
+		setAlign #CENTER, #MIDDLE
+		moveCursor 118, 0
+		setSize 8 * 1.3333333333 * %VIDHEIGHT / %VIDWIDTH, 10
+		drawNum %SPEED
+	endif
+
+endif

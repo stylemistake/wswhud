@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+<title>Warsow HUD</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=525">
+<link rel="shortcut icon" sizes="256x256" href="icon.png">
+<style>
+@font-face { font-family: 'Roboto'; font-style: normal; font-weight: 300; src: local('Roboto Light'), local('Roboto-Light'), url(http://themes.googleusercontent.com/static/fonts/roboto/v10/Hgo13k-tfSpn0qi1SFdUfT8E0i7KZn-EPnyo3HZu7kw.woff) format('woff'); }
+@font-face { font-family: 'Roboto'; font-style: normal; font-weight: 700; src: local('Roboto Bold'), local('Roboto-Bold'), url(http://themes.googleusercontent.com/static/fonts/roboto/v10/d-6IYplOFocCacKzxwXSOD8E0i7KZn-EPnyo3HZu7kw.woff) format('woff'); }
+body,html { background: #000; color: #EEE; text-align: center; }
+div { color: #EEE; text-align: left; font: 16px 'Roboto', sans-serif; }
+div.block { width: 512px; padding: 0px 0px 2px 5px; margin: 0px auto; }
+.items { overflow: hidden; white-space: nowrap; height: 118px; }
+.items_small { overflow: hidden; white-space: nowrap; height: 57px; }
+.notif {
+	display: block; position: absolute; left: 0; right: 0; top: 0; bottom: 0; color: #DDD;
+	text-align: center; font-size: 28px; font-style: italic; margin: auto; height: 60px;
+}
+#notif { display: block; padding: 12px 32px; background: #222; text-align: center; height: 36px; }
+.blk {
+	display: inline-block; padding: 5px 12px; margin: 3px 12px 5px 0px;
+	background: #222; font-weight: bold; font-size: 72px; overflow: hidden;
+}
+.item_red { background-color: #F00; color: #FFF; }
+.item_yellow { background-color: #FF0; color: #000; }
+.item_green { background-color: #0A0; color: #FFF; }
+.item_mega { background-color: #F0B; color: #FFF; }
+.item_ultra { background-color: #60B; color: #FFF; }
+.item_shell { background-color: #02F; color: #FFF; }
+.item_quad { background-color: #F40; color: #FFF; }
+.item_h50 { background-color: #F60; color: #000; }
+.item_h25 { background-color: #FA0; color: #000; }
+.item_free { background-color: #666; color: #FFF; }
+.item_match_start { background-color: #AAA; color: #000; }
+.full { width: 136px; height: 100px; font-size: 76px; text-align: center; }
+.half { width:  50px; font-size: 30px; text-align: center; }
+.empty {
+	background-color: #000; color: #000; width: 0; transition: all 0.4s ease;
+	margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0;
+}
+.inactive { background-color: #111; color: #222; transition: all 0.4s ease; }
+#latency {
+	position: absolute; top: 0; right: 0; margin: 10px;
+	font-size: 20px; color: rgba( 255, 255, 255, 0.20 );
+}
+</style>
+</head>
+<body>
+
+<div class="notif"><span id="notif"></span></div>
+<div id="items_1" class="block items"></div>
+<div id="items_2" class="block items"></div>
+<div id="items_3" class="block items_small"></div>
+<div id="latency"></div>
+
+<script src="jquery-2.0.3.min.js"></script>
+<script>
+
+API = (function( self ) {
+	self.time = function() {
+		return (new Date()).getTime() / 1000;
+	}
+
+	self.request = function( config ) {
+		var time_start = self.time();
+		$.ajax( "items.json", {
+			timeout: 10000,
+			success: function( data ) {
+				data.latency_transport = self.time() - time_start - data.time_response + data.time_request;
+				config.success( data );
+			},
+			error: config.error
+		});
+	}
+
+	return self;
+})({});
+
+
+Item = (function() {
+
+	// Configure this to select, which container each stuff goes into
+	containers = [ $("#items_1"), $("#items_2"), $("#items_3") ];
+	item_c = {
+		"red": 1, "yellow": 1, "green": 1, "match_start": 1,
+		"mega": 2, "ultra": 2, "quad": 2, "shell": 2, "h50": 3, "h25": 3,
+	};
+
+	// Constructor
+	return function ( item, counter, latency ) {
+		var cid = item_c[ item.name ];
+		if ( cid == undefined ) return false;
+
+		// Create item's DOM element
+		var $item = $("<span>").text( counter ).attr( "id", item.id )
+			.addClass( "blk item_" + item.name )
+			.addClass( ( cid == 3 ) ? "half" : "full" );
+		$item.css({ "opacity": 0.01 });
+		$item.animate({ "opacity": 1 }, 100 );
+		containers[ cid - 1 ].append( $item );
+
+		function decrease() {
+			counter -= 1;
+			if ( counter > 0 ) {
+				$item.text( counter ).removeClass("inactive");
+				setTimeout( function() {
+					if ( counter > 0 && counter < 6 ) $item.addClass("inactive");
+				}, 550 );
+			} else {
+				remove();
+			}
+			return counter;
+		}
+
+		function remove() {
+			$item.addClass("empty");
+			setTimeout( function() {
+				$item.remove();
+			}, 1000 );
+		}
+
+		this.id = item.id;
+		this.name = item.name;
+		this.remove = remove;
+		this.decrease = decrease;
+		this.counter = function() {
+			return counter;
+		};
+
+		setTimeout( function() {
+			decrease();
+			var iv = setInterval( function() {
+				if ( counter <= 0 ) clearInterval( iv );
+				decrease();
+			}, 1000 );
+		}, 1000 - latency*1000 );
+	};
+
+})();
+
+$(document).ready( function() {
+	// Click to go fullscreen
+	addEventListener( "click", function() {
+		var el = document.documentElement;
+		var rfs = el.requestFullScreen || el.webkitRequestFullScreen;
+		rfs.call(el);
+	});
+
+	// Ajax call
+	var server_ready = false;
+	$container = $("#items_1, #items_2, #items_3");
+	$notif = $("#notif");
+	var items = {};
+
+	$lat = $("#latency"); lat = null;
+	function updateLatency( latency, weight ) {
+		if ( latency === undefined ) { $lat.text( "--ms" ); return; }
+		if ( weight === undefined ) weight = 0.2;
+		if ( lat === null ) lat = latency;
+		else lat = ( lat + latency * weight ) / ( weight + 1 );
+		$lat.text( ""+Math.round(lat)+"ms" );
+	}
+
+	// Communication thread (HTTP Push)
+	(function loop() {
+		API.request({
+			success: function( data ) {
+				// Latency in ms
+				var latency = ( data.latency_transport + data.latency_proto ) * 1000;
+				updateLatency( latency, 0.2 );
+
+				if ( data.state.pixcode_position !== null && ! server_ready ) {
+					server_ready = true;
+					$notif.text("Ready!").fadeOut( 5000 );
+				} else
+				if ( data.state.pixcode_position === null ) {
+					server_ready = false;
+					$notif.text("Waiting for Warsow...").show();
+				}
+				if ( data.state.match_running == false ) {
+					$notif.text("Get ready to fight!").fadeIn( 100 ).show();
+				} else
+				if ( data.items.length > 0 && data.state.match_running == true ) {
+					$notif.fadeOut( 100 );
+				}
+				var av_item_ids = [];
+				$.each( data.items, function( id, item ) {
+					av_item_ids.push( item.id );
+					if ( items[ item.id ] == undefined ) {
+						updateLatency( latency, 0.5 );
+						items[ item.id ] = new Item( item,
+							Math.round( item.time_respawn - data.time_response ),
+							data.latency_transport + data.latency_proto
+						);
+					}
+				});
+				setTimeout( loop, 200 );
+			},
+			error: function() {
+				server_ready = false;
+				$notif.text("Connection lost").fadeIn( 100 ).show();
+				updateLatency();
+				setTimeout( loop, 5000 );
+			}
+		});
+	})();
+
+	// Timer thread
+	window.iv = setInterval( function() {
+		ids = []
+		$.each( ids, function( k, id ) {
+			if ( items[id].counter() < 0 ) delete items[id];
+		});
+	}, 5000 );
+});
+</script>
+</body>
+</html>

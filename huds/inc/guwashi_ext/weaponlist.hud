@@ -1,0 +1,16 @@
+if %TEAM != #TEAM_SPECTATOR
+if %WEAPON_ITEM
+if %INSTAGIB == 0
+
+	setAlign #CENTER, #MIDDLE
+	setCursor 25 + 0.5 * #WIDTH, 2 + -58 + #HEIGHT
+	drawWeaponIcons 85 0 32 32
+
+	setCursor 25 + 30 + 0.5 * #WIDTH, 12 + -58 + #HEIGHT
+	setAlign #CENTER, #BOTTOM
+	drawWeaponStrongAmmo 85 0 22
+
+endif
+endif
+endif
+
