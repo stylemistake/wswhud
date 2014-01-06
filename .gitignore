@@ -1,4 +1,7 @@
 *.py[cod]
+*.exe
+*.pk3
+launch_wsw.sh
 
 # C extensions
 *.so
